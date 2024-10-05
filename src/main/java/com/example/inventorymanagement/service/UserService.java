@@ -4,6 +4,7 @@ import com.example.inventorymanagement.model.User;
 import com.example.inventorymanagement.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -15,7 +16,7 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     public User registerUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
