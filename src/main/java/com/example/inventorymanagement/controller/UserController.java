@@ -1,10 +1,14 @@
 package com.example.inventorymanagement.controller;
-
+import com.example.inventorymanagement.exceptions.EmailAlreadyRegisteredException;
+import com.example.inventorymanagement.model.LoginRequest;
+import com.example.inventorymanagement.model.LoginResponse;
 import com.example.inventorymanagement.model.User;
 import com.example.inventorymanagement.service.UserService;
+import com.example.inventorymanagement.util.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,10 +22,35 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody User user) {
-        User registeredUser = userService.registerUser(user);
-        return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
+    public ResponseEntity<?> registerUser(@RequestBody User user) {
+        try {
+            userService.registerUser(user);
+            return ResponseEntity.ok("User registered successfully!");
+        } catch (EmailAlreadyRegisteredException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error registering user.");
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
+        Optional<User> optionalUser = userService.findByEmail(loginRequest.getEmail());
+        User user = optionalUser.orElse(null);
+        if (user != null && passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            // 生成并返回 token
+            String token = jwtTokenProvider.createToken(user.toString());
+            return ResponseEntity.ok(new LoginResponse(token));
+        } else {
+            return ResponseEntity.status(401).body("Invalid email or password");
+        }
     }
 
     @GetMapping("/username/{username}")
