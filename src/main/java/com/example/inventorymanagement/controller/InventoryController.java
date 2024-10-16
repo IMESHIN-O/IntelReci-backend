@@ -24,9 +24,12 @@ public class InventoryController {
         return new ResponseEntity<>(newItem, HttpStatus.CREATED);
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<Inventory>> getAllItemsByUserId(@RequestParam Long userId) {
+    @GetMapping("/all/{userId}")
+    public ResponseEntity<?> getAllItemsByUserId(@PathVariable Long userId) {
         List<Inventory> items = inventoryService.getAllItemsByUserId(userId);
+        if (items.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Item Found");
+        }
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
 

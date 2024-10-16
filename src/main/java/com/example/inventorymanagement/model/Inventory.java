@@ -18,7 +18,7 @@ public class Inventory {
     private Long id;
 
     private String itemName;
-    private Integer quantity;
+    private float quantity;
     private String unit;
     private String category;
     private LocalDate expirationDate;

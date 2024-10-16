@@ -19,6 +19,7 @@ public class Recipe {
     private String description;
 
     @Lob
+    @Column(columnDefinition = "json")
     private String ingredients;  // 以 JSON 格式存储食材信息
 
     @ManyToOne

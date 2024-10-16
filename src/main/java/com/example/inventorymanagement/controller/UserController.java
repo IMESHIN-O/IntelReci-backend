@@ -47,7 +47,7 @@ public class UserController {
         if (user != null && passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             // 生成并返回 token
             String token = jwtTokenProvider.createToken(user.toString());
-            return ResponseEntity.ok(new LoginResponse(token));
+            return ResponseEntity.ok(new LoginResponse(token,user.getId()));
         } else {
             return ResponseEntity.status(401).body("Invalid email or password");
         }
