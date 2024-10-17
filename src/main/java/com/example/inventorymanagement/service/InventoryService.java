@@ -37,4 +37,19 @@ public class InventoryService {
     public Optional<Inventory> findByUserIdAndItemName(Long userId, String itemName) {
         return Optional.ofNullable(inventoryRepository.findByUserIdAndItemName(userId, itemName));
     }
+    public List<String> getAllItemNames() {
+        return inventoryRepository.findAllItemNames();
+    }
+
+    // 更新库存项的数量
+    public Inventory updateQuantity(Long id, double newQuantity) {
+        Optional<Inventory> inventoryOpt = inventoryRepository.findById(id);
+        if (inventoryOpt.isPresent()) {
+            Inventory inventory = inventoryOpt.get();
+            inventory.setQuantity((float)newQuantity);  // 更新数量
+            return inventoryRepository.save(inventory); // 保存更新后的库存项
+        } else {
+            throw new RuntimeException("Item not found");
+        }
+    }
 }

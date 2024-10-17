@@ -33,6 +33,11 @@ public class InventoryController {
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
 
+    @GetMapping("/names")
+    public List<String> getAllItemNames() {
+        return inventoryService.getAllItemNames();
+    }
+
     @GetMapping("/{itemId}")
     public ResponseEntity<Inventory> getItemById(@PathVariable Long itemId) {
         Optional<Inventory> item = inventoryService.findById(itemId);
@@ -47,15 +52,16 @@ public class InventoryController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<Inventory> updateItem(@RequestBody Inventory inventory) {
-        Inventory updatedItem = inventoryService.updateItem(inventory);
-        return new ResponseEntity<>(updatedItem, HttpStatus.OK);
-    }
-
     @DeleteMapping("/{itemId}")
     public ResponseEntity<Void> deleteItem(@PathVariable Long itemId) {
         inventoryService.deleteItem(itemId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // 更新库存项的数量（通过ID）
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Inventory> updateItemQuantity(@PathVariable Long id, @RequestBody Inventory updatedInventory) {
+        Inventory updatedItem = inventoryService.updateQuantity(id, updatedInventory.getQuantity());
+        return new ResponseEntity<>(updatedItem, HttpStatus.OK);
     }
 }
