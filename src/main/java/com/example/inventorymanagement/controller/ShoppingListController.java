@@ -1,5 +1,6 @@
 package com.example.inventorymanagement.controller;
 
+import com.example.inventorymanagement.model.Inventory;
 import com.example.inventorymanagement.model.ShoppingList;
 import com.example.inventorymanagement.service.ShoppingListService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,9 +45,9 @@ public class ShoppingListController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<ShoppingList> updateItem(@RequestBody ShoppingList shoppingList) {
-        ShoppingList updatedItem = shoppingListService.updateItem(shoppingList);
+    @PutMapping("/update/{itemId}")
+    public ResponseEntity<ShoppingList> updateItem(@PathVariable Long itemId, @RequestBody ShoppingList updatedShoppingList) {
+        ShoppingList updatedItem = shoppingListService.updateItem(itemId,updatedShoppingList.getQuantity());
         return new ResponseEntity<>(updatedItem, HttpStatus.OK);
     }
 

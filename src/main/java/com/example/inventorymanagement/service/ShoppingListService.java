@@ -1,5 +1,6 @@
 package com.example.inventorymanagement.service;
 
+import com.example.inventorymanagement.model.Inventory;
 import com.example.inventorymanagement.model.ShoppingList;
 import com.example.inventorymanagement.repository.ShoppingListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,16 @@ public class ShoppingListService {
 
     public ShoppingList updateItem(ShoppingList shoppingList) {
         return shoppingListRepository.save(shoppingList);
+    }
+    public ShoppingList updateItem(Long itemId,double newQuantity) {
+        Optional<ShoppingList> shoppingListOpt = shoppingListRepository.findById(itemId);
+        if (shoppingListOpt.isPresent()) {
+            ShoppingList shoppingList = shoppingListOpt.get();
+            shoppingList.setQuantity((int)newQuantity);  // 更新数量
+            return shoppingListRepository.save(shoppingList); // 保存更新后的库存项
+        } else {
+            throw new RuntimeException("Item not found");
+        }
     }
 
     public void deleteItem(Long itemId) {
